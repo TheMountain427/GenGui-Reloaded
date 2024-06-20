@@ -1,0 +1,40 @@
+Collection -> Groups of Files 
+Files -> Single File containing Blocks
+Blocks -> Code group of tags, {}
+Groups -> All tags under a block name
+Tags -> Individual lines within a block
+
+
+$MasterGen
+    blocks
+    DataPath
+    PromptOutput
+
+
+
+
+
+
+Pipeline:
+
+Data Source
+║
+║
+╠══════ New-DataBlock
+║
+║
+╠══════ Get-AllData
+║
+║
+╠══════ Set-AllTagCounts
+║
+║
+╠══════ Select-Tags
+║
+║
+╠══════ Set-FlagCounts
+║
+║
+╠══════ New-Prompt
+║
+║
