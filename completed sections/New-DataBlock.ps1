@@ -32,10 +32,28 @@ function New-DataBlock {
         class Generator  {
             [hashtable]$Blocks = @{}
             [string]$DataPath = ''
-            [hashtable]$PromptOutput = @{}
+            [PromptOutput]$PromptOutput = [PromptOutput]::new()
             [List[object]]$PromptHistory = [List[object]]::new()
             [int]$Seed = 0
             [object]$FlagCounts 
+        }
+
+        class PromptOutput : Hashtable {
+            [string]$Prompt = ''
+            [int]$PromptSeed = 0
+            
+            PromptOutput() { $this.Init(@{
+                'Prompt' = [string]$this.Prompt
+                'PromptSeed' = [int]$this.Seed
+            }) }
+
+            PromptOutput([hashtable]$Properties) { $this.Init($Properties) }
+
+            [void] Init([hashtable]$Properties) {
+                foreach ($Property in $Properties.Keys) {
+                    $this.$Property = $Properties.$Property
+                }
+            }
         }
     }
     
@@ -82,9 +100,10 @@ function New-DataBlock {
 
         # Create or reset the blocks master variable
         $MasterGen = [Generator]::new()
+
         $MasterGen.FlagCounts = $flgCounts
         $MasterGen.DataPath = $Path
-
+        
         return $MasterGen
 
     }

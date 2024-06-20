@@ -23,7 +23,7 @@ function New-Prompt {
         [Parameter(Mandatory = $false)]
             [string]$SingleFlag = '',
         [Parameter(Mandatory=$false)]
-            [int]$Seed
+            [int]$Seed = 0
     )
     
     Begin{ # Pipeline values are not available yet
@@ -105,7 +105,7 @@ function New-Prompt {
             }
 
             $output = [System.String]::Join(' ', $allSegments)
-            $masterGen.PromptOutput = $output
+            $MasterGen.PromptOutput.Prompt = $output
 
             }else{
 
@@ -141,9 +141,16 @@ function New-Prompt {
                 $allSegments.Add($segment.GetSingleSegment())
 
                 $output = [System.String]::Join(' ', $allSegments)
-                $MasterGen.PromptOutput = $output
+
+                $MasterGen.PromptOutput.Prompt = $output
                 
             }
+
+            # store the seed used to select tags with the prompt, then reset the seed to 0
+            $promptSeed = $MasterGen.Seed
+            $MasterGen.PromptOutput.PromptSeed = $promptSeed
+            $MasterGen.Seed = 0
+
         }
     End{ # Used for cleanup
     }

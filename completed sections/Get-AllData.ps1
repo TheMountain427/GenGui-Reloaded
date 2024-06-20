@@ -36,7 +36,7 @@ function Get-AllData {
             [int]$HashLineNumber # Original skips numbers when line is empty, don't think this is actually neccessary
         }
 
-        class BlockData : System.Collections.Hashtable {
+        class BlockData : Hashtable {
             [List[object]]$Tags = [List[object]]::new()
             [string]$BlockName = ''
             [string]$BlockFlag = ''
