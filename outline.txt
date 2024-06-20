@@ -5,10 +5,30 @@ Groups -> All tags under a block name
 Tags -> Individual lines within a block
 
 
-$MasterGen
-    blocks
-    DataPath
-    PromptOutput
+$MasterGen ╗
+           ╠═ Blocks ╗
+           ║         ╠═ BlockName1 ╗
+           ║         ║             ╠═ SelectCount
+           ║         ║             ╠═ BlockFlag
+           ║         ║             ╠═ SelectedLines ╗
+           ║         ║             ║                ╠═ Line1
+           ║         ║             ║                ╠═ Line2
+           ║         ║             ║                ╚═ ...
+           ║         ║             ╠═ BlockName
+           ║         ║             ╚═ Tags ╗
+           ║         ║                     ╠═ Line
+           ║         ║                     ╠═ OriginalLineNumber
+           ║         ║                     ╚═ HashLineNumber
+           ║         ╠═ BlockName2 ╗
+           ║         ║             ╚═ ...
+           ║         ╚═ ...
+           ╠═ DataPath
+           ╠═ PromptOutput ╗
+           ║               ╠═ Prompt
+           ║               ╚═ PromptSeed
+           ╠═ PromptHistory
+           ╠═ Seed
+           ╚═ FlagCounts
 
 
 
@@ -17,24 +37,63 @@ $MasterGen
 
 Pipeline:
 
-Data Source
-║
-║
-╠══════ New-DataBlock
-║
-║
-╠══════ Get-AllData
-║
-║
-╠══════ Set-AllTagCounts
-║
-║
-╠══════ Select-Tags
-║
-║
-╠══════ Set-FlagCounts
-║
-║
-╠══════ New-Prompt
-║
-║
+Begin
+--Set up environment--
+Create new MasterObject:
+    Command:
+            New-DataBlock 
+    Locks:
+    Input:  
+            Path to datasource  
+            New variable ($MasterGen)
+        Changes: [ ‹New› ‹› ↔Changed↔ ↔↔ ]<---Can be changed | Cannot be changed---> [ ≡Locked≡ ≡≡ ]
+                ‹MasterGen›.‹Blocks›: {}
+                           .‹DataPath›: Path
+                           .‹PromptOutput›.‹Prompt›
+                                           .‹PromptSeed›
+                           .‹PromptHistory›
+                           .‹Seed›: 0
+                           .‹FlagCounts›.‹Flag1›: 0
+
+--Get data from source--
+Grab blocks and lines from data source:
+    Command:
+            Get-AllData
+    Locks:  
+            MasterGen.≡DataPath≡
+    Input:  
+            MasterObject ($MasterGen)
+        Changes: [ ‹New› ‹› ↔Changed↔ ↔↔ ]<---Can be changed | Cannot be changed---> [ ≡Locked≡ ≡≡ ]
+                MasterGen.↔Blocks↔.‹Block1›.‹BlockFlag›: Flag from dataset
+                                           .‹BlockName›: BlockName from dataset
+                                           .‹Tags›: Lines from dataset
+                                           .‹SelectedLines›: {}
+                                           .‹SelectCount›: 0
+                          .≡DataPath≡: Path
+                          .PromptOutput.Prompt
+                                       .PromptSeed
+                          .PromptHistory
+                          .Seed: 0
+                          .FlagCounts:Flag1: 0
+
+
+
+--Select Tags--
+    Command:
+            Select-Tags
+    Locks: 
+            MasterGen.Blocks.Block1.≡BlockFlag≡
+                                   .≡BlockName≡
+                                   .≡Tags≡
+                                   .≡SelectCount≡
+            MasterGen.PromptOutput.≡PromptSeed≡
+            MasterGen.≡Seed≡
+
+--Generate Prompt--
+    Command:
+            New-Prompt
+    Locks:
+        End of Pipe
+
+
+

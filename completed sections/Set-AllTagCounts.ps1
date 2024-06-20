@@ -69,10 +69,10 @@ function Set-AllTagCounts {
 
                 # check if the NumOfTags key exists. If yes, set the value. If no, create it and its value.
                 # should be obsolete, just set =
-                if ($blocks.$groupName.ContainsKey("NumOfTagsToSelect")) {
-                    $blocks.$groupName.NumOfTagsToSelect = $NumOfTagsToSelect
+                if ($blocks.$groupName.ContainsKey("SelectCount")) {
+                    $blocks.$groupName.SelectCount = $NumOfTagsToSelect
                 }else{
-                    $blocks.$groupName.Add("NumOfTagsToSelect", $NumOfTagsToSelect)
+                    $blocks.$groupName.Add("SelectCount", $NumOfTagsToSelect)
                 }
             }
         }

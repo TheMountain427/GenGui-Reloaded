@@ -37,25 +37,25 @@ function Select-Tags {
             }elseif ($MasterGen.Seed -ne 0) {
                 Get-Random -SetSeed $MasterGen.Seed
             }else{
-                $newSeed = Get-Random -SetSeed ([Environment]::TickCount) | Out-Null
+                $newSeed = Get-Random -SetSeed ([Environment]::TickCount) 
                 $MasterGen.Seed = $newSeed
             }
 
             foreach ($groupName in $groups) {
 
-                if (($blocks.$groupName.ContainsKey("NumOfTagsToSelect")) -ne $true) {
+                if (($blocks.$groupName.ContainsKey("SelectCount")) -ne $true) {
 
-                    Write-Warning "$groupName does not contain a NumOfTagsToSelect property"
+                    Write-Warning "$groupName does not contain a SelectCount property"
                     continue # shouldn't happen unless pipeline is done incorrectly
 
                 }
 
-                if ($blocks.$groupName.NumOfTagsToSelect -le 0) {
+                if ($blocks.$groupName.SelectCount -le 0) {
                     continue # go next, no need to do anything if nothing will be selected
                 }
 
                 # shorten some variables for readabillity
-                $numOfTagsToSelect = $blocks.$groupName.NumOfTagsToSelect
+                $numOfTagsToSelect = $blocks.$groupName.SelectCount
                 $totalTagsInBlock = $blocks.$groupName.Tags.Count
                 $tags = $blocks.$groupName.Tags
 

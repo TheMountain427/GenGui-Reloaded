@@ -48,6 +48,11 @@ function Get-AllData {
             BlockData([hashtable]$Properties) { $this.Init($Properties) }
 
             [void] Init([hashtable]$Properties) {
+                $this.Tags = [List[object]]::new()
+                $this.BlockName = ''
+                $this.BlockFlag = ''
+                $this.SelectCount = 0
+                $this.SelectedLines = [List[object]]::new()
                 foreach ($Property in $Properties.Keys) {
                     $this.$Property = $Properties.$Property
                 }

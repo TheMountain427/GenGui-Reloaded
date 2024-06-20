@@ -57,7 +57,7 @@ function Set-SingleTagCount {
             # check if the NumOfTags key exists. If yes, set the value. If no, create it and its value.
             # should be obsolete, just set =
             if ($blocks.$BlockName.ContainsKey("SelectCount")) {
-                $blocks.$BlockName.NumOfTagsToSelect = $numOfTagsToSelect
+                $blocks.$BlockName.SelectCount = $numOfTagsToSelect
             }else{
                 $blocks.$BlockName.Add("SelectCount", $numOfTagsToSelect)
             }

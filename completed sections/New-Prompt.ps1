@@ -38,6 +38,12 @@ function New-Prompt {
                 # if ($this.SegmentTags[0] -ne [string]) {
                 #     $this.SegmentTags.RemoveAt(0)
                 # }
+                if ($this.Flag -match "(i?)positive") {
+                    $this.Flag = "prompt"
+                }
+                if ($this.Flag -match "(i?)negative") {
+                    $this.Flag = "negative_prompt"
+                }
                 if ($this.SegmentTags.Count -le 0) { 
                     return $null # don't output anything if there are no tags
                 }
