@@ -21,9 +21,8 @@ function Set-SingleTagCount {
                 [object]$MasterGen,
             [Parameter(Mandatory=$true,ValueFromPipeline)]
                 [string]$BlockName,
-            #[Parameter(Mandatory=$true)]
-                #[ValidateCount(1,1)]
-                #[hashtable]$inputTagCount,
+            [Parameter(Mandatory=$true)]
+                [int]$inputTagCount,
             [Parameter(Mandatory=$false)]
                 [int]$Seed
         )
@@ -36,7 +35,7 @@ function Set-SingleTagCount {
             # ensure the supplied group name exists in the data. if not, stop the function.
             try {
                 if ($blocks.ContainsKey($BlockName)) {
-                    continue
+                    # continue
                 }else{
                     throw
                 }
@@ -48,10 +47,10 @@ function Set-SingleTagCount {
 
             # do some checks then set the NumOfTags key
             # if supplied number is a neg, set NumOfTags to 0
-            if ($blocks.$BlockName -lt 0) {
+            if ($inputTagCount -lt 0) {
                 $numOfTagsToSelect = 0
             }else{    
-                $numOfTagsToSelect = $blocks.$BlockName
+                $numOfTagsToSelect = $inputTagCount
             }
 
             # check if the NumOfTags key exists. If yes, set the value. If no, create it and its value.

@@ -74,6 +74,7 @@ $blocks = $MasterGen.Blocks
 $groups = $MasterGen.Blocks.Keys
 
 # Wait-Debugger
+# dynamically create the tag settings list
 foreach ($flag in $MasterGen.FlagCounts.Keys) {
     
     foreach ($groupName in $groups) {
@@ -86,24 +87,20 @@ foreach ($flag in $MasterGen.FlagCounts.Keys) {
 
             if ($TagLstBox0.Items.Count -lt 14) {
 
-                $TagBox = New-TagBox -InputName $groupName
+                $TagBox = New-TagBox -InputName $groupName -Window $window
                 $TagBox.Width = 225
-                $TagLstBox0.Items.Add($TagBox)
-                $null = $TagBox
+                [void]$TagLstBox0.Items.Add($TagBox)
 
             } elseif ($TagLstBox1.Items.Count -lt 14) {
 
-                $TagBox = New-TagBox -InputName $groupName
+                $TagBox = New-TagBox -InputName $groupName -Window $window
                 $TagBox.Width = 225
-                $TagLstBox1.Items.Add($TagBox)
-                $null = $TagBox
+                [void]$TagLstBox1.Items.Add($TagBox)
 
             } else {
-
-                $TagBox = New-TagBox -InputName $groupName
+                $TagBox = New-TagBox -InputName $groupName -Window $window
                 $TagBox.Width = 225
-                $TagLstBox2.Items.Add($TagBox)
-                $null = $TagBox
+                [void]$TagLstBox2.Items.Add($TagBox)
 
             }
         }
@@ -111,17 +108,54 @@ foreach ($flag in $MasterGen.FlagCounts.Keys) {
 }
 
 
+function tester { # test function lmao
+$tester = [System.Windows.Window]::new()
+    $tester.Title = "tester"
+    $tester.Height = 100
+    $tester.Width = 200
+    $tester.WindowStartupLocation = "CenterScreen"
+    $test = [TextBox]::new()
+    $test.Text = "It's ya boy.... Skinny Penis"
+    $tester.Content = $test
+    $tester.ShowDialog()
+}
 
 
 
+$PromptOutputTxtBox.Add_LostFocus({ tester })
 
+# Allow clicking out of text box, needs grid to have: Name, Focusable, Background(Can be transparent)
+$WindowGrid.Add_MouseDown({ $WindowGrid.Focus() })
 
+# All tag count boxes -> Set Tag Counts
+# Sets tag counts when the associated text box loses focus
+Set-AllTagCounts -MasterGen $MasterGen # reset all counts to 0
+$tagCountBoxes = [System.Windows.NameScope]::GetNameScope($window) | Where-Object { $_.Value.Name -match ".*TagCountTxtBox" }
+foreach ($box in $tagCountBoxes) {
+    $box.Value.Add_LostFocus({ 
+        Set-SingleTagCount -MasterGen $MasterGen -BlockName $_.Source.Tag -InputTagCount $_.Source.Text 
+})
+}
 
+# tag settings up buttons, f me, values from the routed source shit are $_.Source.<gui item>
+$tagCountUpBtns = [System.Windows.NameScope]::GetNameScope($window) | Where-Object { $_.Value.Name -match ".*TagCountUpBtn" }
+foreach ($btn in $tagCountUpBtns) {
+    $btn.Value.Add_Click({
+            $btnPal = $window.FindName("$($_.Source.Tag)TagCountTxtBox")
+            $btnPal | % { $x =[int]$_.Text; $x++; $_.Text = $x }
+            Set-SingleTagCount -MasterGen $MasterGen -BlockName $_.Source.Tag -InputTagCount $btnPal.Text
+    })
+}
 
-
-
-
-
+# tag settings down buttons
+$tagCountDownBtns = [System.Windows.NameScope]::GetNameScope($window) | Where-Object { $_.Value.Name -match ".*TagCountDownBtn" }
+foreach ($btn in $tagCountDownBtns) {
+    $btn.Value.Add_Click({
+            $btnPal = $window.FindName("$($_.Source.Tag)TagCountTxtBox")
+            $btnPal | % { $x = [int]$_.Text; $x--; if($x -lt 0){$x = 0}; $_.Text = $x }
+            Set-SingleTagCount -MasterGen $MasterGen -BlockName $_.Source.Tag -InputTagCount $btnPal.Text
+        })
+}
 
 
 
@@ -131,3 +165,6 @@ foreach ($flag in $MasterGen.FlagCounts.Keys) {
 
 [void]$window.ShowDialog()
 # Remove-Variable -Name window
+
+
+

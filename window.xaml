@@ -3,7 +3,7 @@
         Height="450"
         Width="804"
         Background="#FF383838">
-    <Grid Margin="0,0,0,0">
+    <Grid Name="WindowGrid" Margin="0,0,0,0" Focusable="True" Background="#00000000">
         <Menu Height="20" VerticalAlignment="Top">
             <MenuItem Name="FileMenu" Header="_File">
                 <MenuItem Name="FileMenuOpenData" Header="Open data source location"/>

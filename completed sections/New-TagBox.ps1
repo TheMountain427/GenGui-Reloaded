@@ -24,10 +24,12 @@ function New-TagBox {
     #[CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline)]
-        [string]$InputName
+        [string]$InputName,
+        [Parameter(Mandatory = $true, ValueFromPipeline)]
+        [System.Windows.Window]$Window
     )
 
-    # not even gunna comment this one, its just straight disgusting
+    # not even gunna apologize, this one is just straight disgusting
     # it makes the boxes for the tag count list, all you really need to know
     Begin{  
 
@@ -64,10 +66,12 @@ function New-TagBox {
         $tagCountTxtBoxName= $InputName + "TagCountTxtBox"
         $tagCountUpDownGridName = $InputName + "TagCountUpDownGrid"
         $tagCountUpBtnName= $InputName + "TagCountUpBtn"
-        $tagCountDownBtnName = $InputName + "TagCounDownBtn" 
+        $tagCountDownBtnName = $InputName + "TagCountDownBtn" 
+
 
         $masterGrid = [Grid]::new()
-            $masterGrid.Name = $masterGridName
+            $masterGrid.Name = $masterGridName 
+            $Window.RegisterName($masterGrid.Name, $masterGrid) # <- oooof, FindName won't work if things are registered
             $masterGrid.Height = 20
             $masterGrid.MinHeight = 20
             $masterGrid.MaxHeight = 20
@@ -79,6 +83,7 @@ function New-TagBox {
 
             $borderRectangle = [Rectangle]::new()
                 $borderRectangle.Name = $borderRectangleName
+                $Window.RegisterName($borderRectangle.Name, $borderRectangle) # <-- gotta register :))))))))))))))))
                 $borderRectangle.HorizontalAlignment = "Left"
                 $borderRectangle.VerticalAlignment = "Center"
                 $borderRectangle.Stroke = [Brushes]::Black
@@ -90,10 +95,12 @@ function New-TagBox {
         [void]$masterGrid.Children.Add($borderRectangle)
 
             $tagLabelGrid = [Grid]::new()
-                $tagLabelGrid.Name = $tagLabelGridName
+                $tagLabelGrid.Name = $tagLabelGridName # <-- don't forget to register ;))))
+                $Window.RegisterName($tagLabelGrid.Name, $tagLabelGrid)
 
                 $tagLabel = [Label]::new()
                     $tagLabel.Name = $tagLabelName
+                    $Window.RegisterName($tagLabel.Name, $tagLabel)
                     $tagLabel.Content = $tagLabelContent
                     $tagLabel.Width = 58
                     $tagLabel.HorizontalAlignment = "Center"
@@ -110,6 +117,7 @@ function New-TagBox {
 
             $upDownGrid = [Grid]::new()
                 $upDownGrid.Name = $upDownGridName
+                $Window.RegisterName($upDownGrid.Name, $upDownGrid) # <-- always register your items :DDDD
                 [Grid]::SetColumn($upDownGrid, 1)
                 $upDownGrid.Height = 18
                 $upDownGrid.MinHeight = 18
@@ -125,6 +133,7 @@ function New-TagBox {
 
                 $tagCountTxtBoxGrid = [Grid]::new()
                     $tagCountTxtBoxGrid.Name = $tagCountTxtBoxGridName
+                    $Window.RegisterName($tagCountTxtBoxGrid.Name, $tagCountTxtBoxGrid) # <-- I don't care who you are, you gotta register d:))))
                     $tagCountTxtBoxGrid.MaxWidth = 50
                     Set-Binding -TargetElement $tagCountTxtBoxGrid -TargetProperty $([Grid]::MaxHeightProperty) -Source $upDownGrid -SourceProperty "ActualHeight" -Mode "OneWay"
                     $tagCountTxtBoxGrid.MinWidth = 50
@@ -134,6 +143,8 @@ function New-TagBox {
 
                     $tagCountTxtBox = [TextBox]::new()
                         $tagCountTxtBox.Name = $tagCountTxtBoxName
+                        $Window.RegisterName($tagCountTxtBox.Name, $tagCountTxtBox) # making an item? register :PPP
+                        $tagCountTxtBox.Tag = $InputName
                         $tagCountTxtBox.Text = 0
                         $tagCountTxtBox.Height = 17
                         $tagCountTxtBox.MinHeight = 17
@@ -151,6 +162,7 @@ function New-TagBox {
 
                     $tagCountUpDownGrid = [Grid]::new()
                         $tagCountUpDownGrid.Name = $tagCountUpDownGridName
+                        $Window.RegisterName($tagCountUpDownGrid.Name, $tagCountUpDownGrid) # <-- another item? register XDDD
                         $tagCountUpDownGrid.Width = 25
                         $tagCountUpDownGrid.Height = 20
                         $tagCountUpDownGrid.MinWidth = 25
@@ -163,17 +175,19 @@ function New-TagBox {
 
                         $tagCountUpBtn = [Button]::new()
                             $tagCountUpBtn.Name = $tagCountUpBtnName
-                            $tagCountUpBtn.Content = [char]::convertfromUtf32(0x23F7)
+                            $Window.RegisterName($tagCountUpBtn.Name, $tagCountUpBtn) # <-- register your items, it's good for you :DDDD
+                            $tagCountUpBtn.Tag = $InputName
+                            $tagCountUpBtn.Content = [char]::convertfromUtf32(0x23F6)
                             $tagCountUpBtn.HorizontalAlignment = "Center"
-                            $tagCountUpBtn.VerticalAlignment = "Bottom"
+                            $tagCountUpBtn.VerticalAlignment = "Top"
+                            $tagCountUpBtn.VerticalContentAlignment = "Center"
+                            $tagCountUpBtn.HorizontalContentAlignment = "Center"
                             $tagCountUpBtn.Width = 25
+                            $tagCountUpBtn.Height = 8.5
                             $tagCountUpBtn.MinWidth = 25
                             $tagCountUpBtn.MinHeight = 8.5
                             $tagCountUpBtn.MaxHeight = 8.5
                             $tagCountUpBtn.MaxWidth = 25
-                            $tagCountUpBtn.VerticalContentAlignment = "Center"
-                            $tagCountUpBtn.HorizontalContentAlignment = "Center"
-                            $tagCountUpBtn.Height = 8.5
                             $tagCountUpBtn.FontSize = 8
                             $tagCountUpBtn.Padding = "0,-2.5,0,0"
                             $tagCountUpBtn.BorderThickness = "1,1,1,1"
@@ -181,17 +195,19 @@ function New-TagBox {
 
                         $tagCountDownBtn = [Button]::new()
                             $tagCountDownBtn.Name = $tagCountDownBtnName
-                            $tagCountDownBtn.Content = [char]::convertfromUtf32(0x23F6)
+                            $Window.RegisterName($tagCountDownBtn.Name, $tagCountDownBtn) # <-- making a button? <-- believe it or not, straight to register :3333
+                            $tagCountDownBtn.Tag = $InputName
+                            $tagCountDownBtn.Content = [char]::convertfromUtf32(0x23F7)
                             $tagCountDownBtn.HorizontalAlignment = "Center"
-                            $tagCountDownBtn.VerticalAlignment = "Top"
-                            $tagCountDownBtn.VerticalContentAlignment = "Center"
-                            $tagCountDownBtn.HorizontalContentAlignment = "Center"
+                            $tagCountDownBtn.VerticalAlignment = "Bottom"
                             $tagCountDownBtn.Width = 25
-                            $tagCountDownBtn.Height = 8.5
                             $tagCountDownBtn.MinWidth = 25
                             $tagCountDownBtn.MinHeight = 8.5
                             $tagCountDownBtn.MaxHeight = 8.5
                             $tagCountDownBtn.MaxWidth = 25
+                            $tagCountDownBtn.VerticalContentAlignment = "Center"
+                            $tagCountDownBtn.HorizontalContentAlignment = "Center"
+                            $tagCountDownBtn.Height = 8.5
                             $tagCountDownBtn.FontSize = 8
                             $tagCountDownBtn.Padding = "0,-2.5,0,0"
                             $tagCountDownBtn.BorderThickness = "1,1,1,1"
@@ -199,7 +215,18 @@ function New-TagBox {
                 [void]$upDownGrid.Children.Add($tagCountUpDownGrid)
         [void]$masterGrid.Children.Add($upDownGrid)
 
-    return $masterGrid
+        Set-Variable -Name $masterGrid.Name -Value $masterGrid -Scope 1
+        Set-Variable -Name $borderRectangle.Name -Value $borderRectangle -Scope 1
+        Set-Variable -Name $tagLabelGrid.Name -Value $tagLabelGrid -Scope 1
+        Set-Variable -Name $tagLabel.Name -Value $tagLabel -Scope 1
+        Set-Variable -Name $upDownGrid.Name -Value $upDownGrid -Scope 1
+        Set-Variable -Name $tagCountTxtBoxGrid.Name -Value $tagCountTxtBoxGrid -Scope 1
+        Set-Variable -Name $tagCountTxtBox.Name -Value $tagCountTxtBox -Scope 1
+        Set-Variable -Name $tagCountUpDownGrid.Name -Value $tagCountUpDownGrid -Scope 1
+        Set-Variable -Name $tagCountUpBtn.Name -Value $tagCountUpBtn -Scope 1
+        Set-Variable -Name $tagCountUpBtn.Name -Value $tagCountUpBtn -Scope 1
+
+    return $masterGrid  
     }
     End{
 
