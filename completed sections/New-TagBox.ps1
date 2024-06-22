@@ -35,7 +35,7 @@ function New-TagBox {
 
         Add-Type -AssemblyName PresentationCore, PresentationFramework
 
-        Function Set-Binding {
+        function Set-Binding {
             Param($TargetElement, $TargetProperty, $Source, $SourceProperty, $Mode)
         
             $Bind = [System.Windows.Data.Binding]::new()

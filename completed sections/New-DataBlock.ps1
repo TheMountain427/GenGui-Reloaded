@@ -36,6 +36,19 @@ function New-DataBlock {
             [List[object]]$PromptHistory = [List[object]]::new()
             [int]$Seed = 0
             [object]$FlagCounts 
+
+            # Return the PromptHistory. Loops in reverse order because prompts are added using Add
+            # instead of Insert due to performance
+            # At least I think "Add -> loop backwards to return" is faster than Insert(0, [object]) -> Return List
+            [List[object]]GetPromptHistory() {
+                $list =  [System.Collections.Generic.List[object]]::new()
+                $cnt = $this.PromptHistory.Count - 1 
+                while ($cnt -ge 0) {
+                    $list.Add($this.PromptHistory[$cnt])
+                    $cnt--
+                }
+                return $list
+            }
         }
 
         class PromptOutput : Hashtable {
@@ -103,6 +116,7 @@ function New-DataBlock {
 
         $MasterGen.FlagCounts = $flgCounts
         $MasterGen.DataPath = $Path
+        $MasterGen.PromptHistory.Capacity = 50
         
         return $MasterGen
 

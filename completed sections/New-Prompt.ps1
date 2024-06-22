@@ -72,6 +72,7 @@ function New-Prompt {
         $blocks = $MasterGen.Blocks
         $flagCounts = $MasterGen.FlagCounts
         $groups = $blocks.Keys
+        $trimmedGroups = $groups.Where({$blocks.$_.SelectedLines -ne 0}) # <-- Faster 2.7ms to 1ms
 
         $allSegments = [List[object]]::new()
         $allSegments.Capacity = $flagCounts.Count
@@ -91,13 +92,15 @@ function New-Prompt {
                     $segment = [PromptSegment]::new()
                     $segment.SegmentTags.Capacity = 50
 
-                    foreach ($groupName in $groups) {
-
-                        if ($blocks.$groupName.BlockFlag -match "(?i)$($flag)") {
+                    # foreach ($groupName in $groups) {
+                    foreach ($groupName in $trimmedGroups) {
+                    # $groupsWithMatchingFlag = $trimmedGroups.Where({$blocks.$_.BlockFlag -match "(?i)$($flag)"}) # <-- I think faster, maybe no diff <-- actually slightly slower
+                    # foreach ($groupName in $groupsWithMatchingFlag) {
+                        if (($blocks.$groupName.BlockFlag -match "(?i)$($flag)") -and ($blocks.$groupName.SelectedLines.Count -ne 0)) {
 
                             $tagList.Add($blocks.$groupName.SelectedLines)
                     
-                        }
+                       }
                     }
 
                     $segment.Flag = $flag
@@ -109,9 +112,12 @@ function New-Prompt {
                 $allSegments.Add($segment.GetApiSegment())
 
             }
-
-            $output = [System.String]::Join(' ', $allSegments)
-            $MasterGen.PromptOutput.Prompt = $output
+            # if ($allSegments.Count -eq 1){
+                # $output = [System.String]$allSegments
+            # }else{
+                $output = [System.String]::Join(' ', $allSegments)
+                $MasterGen.PromptOutput.Prompt = $output
+            # }
 
             }else{
 
@@ -156,6 +162,14 @@ function New-Prompt {
             $promptSeed = $MasterGen.Seed
             $MasterGen.PromptOutput.PromptSeed = $promptSeed
             $MasterGen.Seed = 0
+
+            # add prompt to PromptHistory.
+            # if PromptHistory is at capacity, remove the oldest prompt
+            # oldest prompt is at [0] since we are using Add instead of Insert due to performance
+            if ($MasterGen.PromptHistory.Count -eq $MasterGen.PromptHistory.Capacity){
+                $MasterGen.PromptHistory.RemoveAt(0)
+            }
+            $MasterGen.PromptHistory.Add($MasterGen.PromptOutput.Prompt)
 
         }
     End{ # Used for cleanup
