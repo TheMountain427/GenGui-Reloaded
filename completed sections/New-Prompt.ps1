@@ -134,7 +134,7 @@ function New-Prompt {
                     $segment = [PromptSegment]::new()
                     $segment.SegmentTags.Capacity = 50
 
-                    foreach ($groupName in $groups) {
+                    foreach ($groupName in $trimmedGroups) {
 
                         if ($blocks.$groupName.BlockFlag -match "(?i)$($flag)") {
 
@@ -152,7 +152,8 @@ function New-Prompt {
                 
                 $allSegments.Add($segment.GetSingleSegment())
 
-                $output = [System.String]::Join(' ', $allSegments)
+                $output = [string]$allSegments
+                $output.Trim
 
                 $MasterGen.PromptOutput.Prompt = $output
                 

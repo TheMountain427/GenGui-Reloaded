@@ -26,7 +26,8 @@ function Set-FlagCounts {
     Begin{ # Pipeline values are not available yet   
     }
     Process{ # Pipeline values are available here
-        # set a FlagCounts variable so that later we can skip logic if no tags of that type were selected
+        # set a FlagCounts variable so that later we can skip logic if the data contains
+        # no blocks with that flag type
 
         $blocks = $MasterGen.Blocks
         $groups = $blocks.Keys

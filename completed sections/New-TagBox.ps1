@@ -112,6 +112,7 @@ function New-TagBox {
                     $tagLabel.Padding = "0,0,0,0"
                     Set-Binding -TargetElement $tagLabel -TargetProperty $([Label]::MaxWidthProperty) -Source $tagLabelGrid -SourceProperty "ActualWidth" -Mode "OneWay"
                     Set-Binding -TargetElement $tagLabel -TargetProperty $([Label]::MaxHeightProperty) -Source $tagLabelGrid -SourceProperty "ActualWidth" -Mode "OneWay"
+                    $tagLabel.Foreground = "#FFDEDEDE"
             [void]$tagLabelGrid.Children.Add($tagLabel)
         [void]$masterGrid.Children.Add($tagLabelGrid)
 
@@ -127,16 +128,15 @@ function New-TagBox {
                 $upDownGrid.HorizontalAlignment = "Left"
                 $upDownGrid.VerticalAlignment = "Center"
                 $upDownGrid.ColumnDefinitions.Add([ColumnDefinition]::new())
-                $upDownGrid.ColumnDefinitions[0].Width = "50*"
+                $upDownGrid.ColumnDefinitions[0].Width = "28*"
                 $upDownGrid.ColumnDefinitions.Add([ColumnDefinition]::new())
-                $upDownGrid.ColumnDefinitions[1].Width = "26*"
+                $upDownGrid.ColumnDefinitions[1].Width = "52*"
 
                 $tagCountTxtBoxGrid = [Grid]::new()
                     $tagCountTxtBoxGrid.Name = $tagCountTxtBoxGridName
                     $Window.RegisterName($tagCountTxtBoxGrid.Name, $tagCountTxtBoxGrid) # <-- I don't care who you are, you gotta register d:))))
-                    $tagCountTxtBoxGrid.MaxWidth = 50
+                    $tagCountTxtBoxGrid.Width = 30
                     Set-Binding -TargetElement $tagCountTxtBoxGrid -TargetProperty $([Grid]::MaxHeightProperty) -Source $upDownGrid -SourceProperty "ActualHeight" -Mode "OneWay"
-                    $tagCountTxtBoxGrid.MinWidth = 50
                     Set-Binding -TargetElement $tagCountTxtBoxGrid -TargetProperty $([Grid]::MinHeightProperty) -Source $upDownGrid -SourceProperty "ActualHeight" -Mode "OneWay"
                     $tagCountTxtBoxGrid.HorizontalAlignment = "Center"
                     $tagCountTxtBoxGrid.VerticalAlignment = "Center"
@@ -147,15 +147,16 @@ function New-TagBox {
                         $tagCountTxtBox.Tag = $InputName
                         $tagCountTxtBox.Text = 0
                         $tagCountTxtBox.Height = 17
-                        $tagCountTxtBox.MinHeight = 17
-                        $tagCountTxtBox.MinWidth = 50
-                        $tagCountTxtBox.MaxHeight = 17
-                        $tagCountTxtBox.MaxWidth = 50
-                        $tagCountTxtBox.HorizontalAlignment = "Left"
-                        $tagCountTxtBox.TextWrapping = "Wrap"
-                        [Grid]::SetColumn($tagCountTxtBox, 1)
-                        $tagCountTxtBox.HorizontalAlignment = "Left"
+                        $tagCountTxtBox.Width = 25
+                        $tagCountTxtBox.HorizontalAlignment = "Center"
                         $tagCountTxtBox.VerticalAlignment = "Center"
+                        $tagCountTxtBox.VerticalContentAlignment = "Center"
+                        $tagCountTxtBox.HorizontalContentAlignment = "Center"
+                        $tagCountTxtBox.Background = "#FF3B3B3B"
+                        $tagCountTxtBox.BorderBrush = "#FF171717"
+                        $tagCountTxtBox.Foreground = "#FFDEDEDE"
+                        $tagCountTxtBox.SelectionBrush = "#FF000000"
+                        [Grid]::SetColumn($tagCountTxtBox, 0)
                         # $tagCountTxtBox.BorderBrush = $null
                 [void]$tagCountTxtBoxGrid.Children.Add($tagCountTxtBox)
             [void]$upDownGrid.Children.Add($tagCountTxtBoxGrid)
@@ -163,14 +164,12 @@ function New-TagBox {
                     $tagCountUpDownGrid = [Grid]::new()
                         $tagCountUpDownGrid.Name = $tagCountUpDownGridName
                         $Window.RegisterName($tagCountUpDownGrid.Name, $tagCountUpDownGrid) # <-- another item? register XDDD
-                        $tagCountUpDownGrid.Width = 25
+                        $tagCountUpDownGrid.Width = 52
                         $tagCountUpDownGrid.Height = 20
-                        $tagCountUpDownGrid.MinWidth = 25
-                        $tagCountUpDownGrid.MaxWidth = 25
                         Set-Binding -TargetElement $tagCountUpDownGrid -TargetProperty $([Grid]::MinHeightProperty) -Source $upDownGrid -SourceProperty "ActualHeight" -Mode "OneWay"
                         Set-Binding -TargetElement $tagCountUpDownGrid -TargetProperty $([Grid]::MaxHeightProperty) -Source $upDownGrid -SourceProperty "ActualHeight" -Mode "OneWay"
                         [Grid]::SetColumn($tagCountUpDownGrid, 1) 
-                        $tagCountUpDownGrid.HorizontalAlignment = "Left"
+                        $tagCountUpDownGrid.HorizontalAlignment = "Center"
                         $tagCountUpDownGrid.VerticalAlignment = "Center"
 
                         $tagCountUpBtn = [Button]::new()
@@ -178,18 +177,14 @@ function New-TagBox {
                             $Window.RegisterName($tagCountUpBtn.Name, $tagCountUpBtn) # <-- register your items, it's good for you :DDDD
                             $tagCountUpBtn.Tag = $InputName
                             $tagCountUpBtn.Content = [char]::convertfromUtf32(0x23F6)
-                            $tagCountUpBtn.HorizontalAlignment = "Center"
-                            $tagCountUpBtn.VerticalAlignment = "Top"
+                            $tagCountUpBtn.HorizontalAlignment = "Left"
+                            $tagCountUpBtn.VerticalAlignment = "Center"
                             $tagCountUpBtn.VerticalContentAlignment = "Center"
                             $tagCountUpBtn.HorizontalContentAlignment = "Center"
                             $tagCountUpBtn.Width = 25
-                            $tagCountUpBtn.Height = 8.5
-                            $tagCountUpBtn.MinWidth = 25
-                            $tagCountUpBtn.MinHeight = 8.5
-                            $tagCountUpBtn.MaxHeight = 8.5
-                            $tagCountUpBtn.MaxWidth = 25
-                            $tagCountUpBtn.FontSize = 8
-                            $tagCountUpBtn.Padding = "0,-2.5,0,0"
+                            $tagCountUpBtn.Height = 25
+                            $tagCountUpBtn.FontSize = 12
+                            $tagCountUpBtn.Padding = "0,0,0,0"
                             $tagCountUpBtn.BorderThickness = "1,1,1,1"
                     [void]$tagCountUpDownGrid.Children.Add($tagCountUpBtn)
 
@@ -198,18 +193,14 @@ function New-TagBox {
                             $Window.RegisterName($tagCountDownBtn.Name, $tagCountDownBtn) # <-- making a button? <-- believe it or not, straight to register :3333
                             $tagCountDownBtn.Tag = $InputName
                             $tagCountDownBtn.Content = [char]::convertfromUtf32(0x23F7)
-                            $tagCountDownBtn.HorizontalAlignment = "Center"
-                            $tagCountDownBtn.VerticalAlignment = "Bottom"
+                            $tagCountDownBtn.HorizontalAlignment = "Right"
+                            $tagCountDownBtn.VerticalAlignment = "Center"
                             $tagCountDownBtn.Width = 25
-                            $tagCountDownBtn.MinWidth = 25
-                            $tagCountDownBtn.MinHeight = 8.5
-                            $tagCountDownBtn.MaxHeight = 8.5
-                            $tagCountDownBtn.MaxWidth = 25
+                            $tagCountDownBtn.Height = 25
                             $tagCountDownBtn.VerticalContentAlignment = "Center"
                             $tagCountDownBtn.HorizontalContentAlignment = "Center"
-                            $tagCountDownBtn.Height = 8.5
-                            $tagCountDownBtn.FontSize = 8
-                            $tagCountDownBtn.Padding = "0,-2.5,0,0"
+                            $tagCountDownBtn.FontSize = 12
+                            $tagCountDownBtn.Padding = "0,0,0,0"
                             $tagCountDownBtn.BorderThickness = "1,1,1,1"
                     [void]$tagCountUpDownGrid.Children.Add($tagCountDownBtn)
                 [void]$upDownGrid.Children.Add($tagCountUpDownGrid)

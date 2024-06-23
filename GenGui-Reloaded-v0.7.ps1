@@ -73,7 +73,9 @@ $Path = "C:\Users\sbker\OneDrive\Desktop\GenGui-Reloaded\Classic GenGui\Prompt C
 
 $MasterGen = New-DataBlock $Path
 
-Get-AllData $MasterGen
+Get-AllData -MasterGen $MasterGen
+
+Set-FlagCounts -MasterGen $MasterGen
 
 $blocks = $MasterGen.Blocks
 $groups = $MasterGen.Blocks.Keys
@@ -167,10 +169,54 @@ $PromptNumTxtBox.Add_KeyDown({
 Set-Binding -TargetElement $PromptNumSldr -TargetProperty $([System.Windows.Controls.Slider]::ValueProperty) -Source $PromptNumTxtBox -SourceProperty "Text" -Mode "TwoWay"
 
 $GeneratePromptBtn.Add_Click({
+
     if ($GenTypePositive.IsSelected -eq $true) {
-        
+
+        $global:output = [System.Collections.Generic.List[object]]::new()
+
+        $i = 1; while ([int]$PromptNumTxtBox.Text -ge $i){
+            Select-Tags $MasterGen
+            New-Prompt $MasterGen -SingleFlag "Positive"
+            Clear-SelectedLines -MasterGen $masterGen
+            $global:output.Add($MasterGen.PromptOutput.Prompt)
+            $i++
+        }
+
+        [string]$global:finalOutput = "$([System.String]::Join("`n`n", $global:output))"
+        $PromptOutputTxtBox.Text = $global:finalOutput
+
+
+    }elseif ($GenTypeApi.IsSelected -eq $true) {
+
+        $global:output = [System.Collections.Generic.List[object]]::new()
+
+        $i = 1; while ([int]$PromptNumTxtBox.Text -ge $i){
+            Select-Tags $MasterGen
+            New-Prompt $MasterGen 
+            Clear-SelectedLines -MasterGen $masterGen
+            $global:output.Add($MasterGen.PromptOutput.Prompt)
+            $i++
+        }
+
+        [string]$global:finalOutput = "$([System.String]::Join("`n`n", $global:output))"
+        $PromptOutputTxtBox.Text = $global:finalOutput
+
+    }
+    
+    # set last seed to text box
+    $LastSeedTxtBox.Text = $MasterGen.PromptOutput.PromptSeed
+
+    # Auto copy output to clipboard
+    if ($AutoCopyChkBox.IsChecked -eq $true) {
+        [System.Windows.Clipboard]::SetText($PromptOutputTxtBox.Text)
     }
 })
+
+$CopyToClipboardBtn.Add_Click({
+    [System.Windows.Clipboard]::SetText($PromptOutputTxtBox.Text)
+})
+
+
 
 
 #------------------------------------
@@ -193,8 +239,11 @@ foreach ($box in $tagCountBoxes) {
     })
 
     # when individual tag setting text box loses focus, set the associated blocks SelectCount value
-    # using this instead of TextChanged so that the function only runs once
+    # using this instead of TextChanged cause uh, I'm not really sure anymore
     $box.Value.Add_LostFocus({ 
+        if([int]$this.Text -le 0) {
+            $this.Text = "0"
+        }
         Set-SingleTagCount -MasterGen $MasterGen -BlockName $_.Source.Tag -InputTagCount $_.Source.Text 
     })
 
