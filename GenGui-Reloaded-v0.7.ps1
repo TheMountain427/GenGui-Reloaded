@@ -7,6 +7,8 @@ using namespace System.Windows.Media
 Param()
 
 # hide console window
+# cmd process won't end unless we kill it.
+# save the process to a variable so we can kill it after closing gui
 # Add-Type -Name Window -Namespace Console -MemberDefinition '
 # [DllImport("Kernel32.dll")]
 # public static extern IntPtr GetConsoleWindow();
@@ -15,6 +17,9 @@ Param()
 # public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
 
 # [Console.Window]::ShowWindow([Console.Window]::GetConsoleWindow(), 0)
+
+# $cmdProcess = Get-Process -Name cmd | select Id, StartTime | sort StartTime -Descending | select * -First 1
+
 
 # Wait-Debugger
 
@@ -293,5 +298,7 @@ foreach ($btn in $tagCountDownBtns) {
 [void]$window.ShowDialog()
 # Remove-Variable -Name window
 
-
+# kill the cmd process so it does not hang around
+# and hold files hostage
+# Stop-Process -Id $cmdProcess.Id
 
