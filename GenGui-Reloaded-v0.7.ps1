@@ -63,13 +63,13 @@ function Set-Binding {
     [void]$TargetElement.SetBinding($TargetProperty, $Bind) 
 }
 
-$functionPath = "C:\Users\sbker\OneDrive\Desktop\GenGui-Reloaded\Reloaded GenGui\GenGui-Reloaded\completed sections"
+$functionPath = "$PSScriptRoot\Completed Sections"
 $functions = Get-ChildItem -Path $functionPath
 foreach ($function in $functions) {
     . $function.FullName
 }
 
-$Path = "C:\Users\sbker\OneDrive\Desktop\GenGui-Reloaded\Classic GenGui\Prompt Collections\"
+$Path = "$PSScriptRoot\Prompt Collections\"
 
 $MasterGen = New-DataBlock $Path
 
